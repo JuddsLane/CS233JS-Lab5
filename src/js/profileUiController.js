@@ -35,6 +35,22 @@ function handleTopTextChange(event) {
     canvasModel.render(canvasElement);
 }
 
+function handleTextColorChange(event) {
+    canvasModel.textColor = event.target.value;
+    canvasModel.render(canvasElement);
+}
+
+function handleTextOutline(event) {
+    canvasModel.strokeColor = event.target.value;
+    event.target.value == 'none' ? canvasModel.strokeWidth = 0 : canvasModel.strokeWidth = 1;
+    canvasModel.render(canvasElement);
+}
+
+function handleFilter(event) {
+    canvasModel.filter = event.target.value;
+    canvasModel.render(canvasElement);
+}
+
 /** Re-renders on every keystroke so the preview tracks the input live. */
 function handleBottomTextChange(event) {
     canvasModel.bottomText = event.target.value;
@@ -60,6 +76,9 @@ function setupEventListeners() {
     document.getElementById('topText').addEventListener('input', handleTopTextChange);
     document.getElementById('bottomText').addEventListener('input', handleBottomTextChange);
     document.getElementById('downloadPic').addEventListener('click', handleDownloadClick);
+    document.getElementById('textColor').addEventListener('input', handleTextColorChange);
+    document.getElementById('textOutline').addEventListener('input', handleTextOutline);
+    document.getElementById('filterSelect').addEventListener('input', handleFilter);
 }
 
 /**

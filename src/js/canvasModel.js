@@ -14,6 +14,10 @@ export default class CanvasModel {
         this.topText = '';
         /** @type {string} */
         this.bottomText = '';
+        this.textColor = 'white';
+        this.strokeColor = 'none';
+        this.strokeWidth = 0;
+        this.filter = 'none';
     }
 
     /**
@@ -26,12 +30,13 @@ export default class CanvasModel {
         const { width, height } = canvasElement;
 
         ctx.clearRect(0, 0, width, height);
-
+        this.filter == 'none' ? ctx.filter = 'none' : ctx.filter = this.filter + '(100%)';
         if (this.image) {
             ctx.drawImage(this.image, 0, 0, width, height);
         }
-
+        
         this.#drawText(ctx, canvasElement);
+        
     }
 
     /**
@@ -43,17 +48,19 @@ export default class CanvasModel {
         const fontSize = Math.floor(canvasElement.width / 10);
         ctx.font = `bold ${fontSize}px Impact, sans-serif`;
         ctx.textAlign = 'center';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = fontSize / 10;
+        ctx.fillStyle = this.textColor;
+        ctx.strokeStyle = this.strokeColor;
+        ctx.lineWidth = fontSize / 20;
 
         if (this.topText) {
             ctx.fillText(this.topText, canvasElement.width / 2, fontSize);
-            ctx.strokeText(this.topText, canvasElement.width / 2, fontSize);
+            if (this.strokeWidth != 0)
+                ctx.strokeText(this.topText, canvasElement.width / 2, fontSize);
         }
         if (this.bottomText) {
             ctx.fillText(this.bottomText, canvasElement.width / 2, canvasElement.height - fontSize / 4);
-            ctx.strokeText(this.bottomText, canvasElement.width / 2, canvasElement.height - fontSize / 4);
+            if (this.strokeWidth != 0)
+                ctx.strokeText(this.bottomText, canvasElement.width / 2, canvasElement.height - fontSize / 4);
         }
     }
 }
