@@ -33,28 +33,46 @@ function handleImageChange(event) {
 function handleTopTextChange(event) {
     canvasModel.topText = event.target.value;
     canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
+
 }
 
 function handleTextColorChange(event) {
     canvasModel.textColor = event.target.value;
     canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
 }
 
 function handleTextOutline(event) {
     canvasModel.strokeColor = event.target.value;
     event.target.value == 'none' ? canvasModel.strokeWidth = 0 : canvasModel.strokeWidth = 1;
     canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
 }
 
 function handleFilter(event) {
     canvasModel.filter = event.target.value;
     canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
+}
+
+function handleFont(event) {
+    canvasModel.fontName = event.target.value;
+    canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
+}
+
+function handleFontSize(event) {
+    canvasModel.fontSize = event.target.value;
+    canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
 }
 
 /** Re-renders on every keystroke so the preview tracks the input live. */
 function handleBottomTextChange(event) {
     canvasModel.bottomText = event.target.value;
     canvasModel.render(canvasElement);
+    canvasModel.storeInLocalStorage();
 }
 
 /**
@@ -79,6 +97,8 @@ function setupEventListeners() {
     document.getElementById('textColor').addEventListener('input', handleTextColorChange);
     document.getElementById('textOutline').addEventListener('input', handleTextOutline);
     document.getElementById('filterSelect').addEventListener('input', handleFilter);
+    document.getElementById('fontSelect').addEventListener('input', handleFont);
+    document.getElementById('fontSize').addEventListener('input', handleFontSize);
 }
 
 /**
@@ -90,6 +110,7 @@ function setImageElement(url) {
     canvasModel.image = hiddenImageElement;
     hiddenImageElement.onload = () => {
         canvasModel.render(canvasElement);
+        canvasModel.storeInLocalStorage();
     };
 }
 
@@ -103,10 +124,23 @@ function sizeCanvas() {
  * Initializes the application: wires up event listeners, sizes the canvas,
  * and renders the default image so the canvas is never empty.
  */
+
 export function init() {
     const DEFAULT_IMAGE_FILE = "./images/defaultProfileImage.jpg";
-
+    
     setupEventListeners();
     sizeCanvas();
-    setImageElement(DEFAULT_IMAGE_FILE);
+
+    const saved = CanvasModel.loadFromLocalStorage();
+    if (saved?.imageUrl) {
+        Object.assign(canvasModel, saved);
+        document.getElementById('topText').value = saved.topText;
+        document.getElementById('bottomText').value = saved.bottomText;
+        document.getElementById('filterSelect').value = saved.filter;
+        setImageElement(saved.imageUrl);
+    } else {
+        // Pull HTML defaults into the model so the first render matches what the form shows.
+        canvasModel.filter = document.getElementById('filterSelect').value;
+        setImageElement(DEFAULT_IMAGE_FILE);
+    }
 }
